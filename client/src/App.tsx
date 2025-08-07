@@ -4,7 +4,7 @@ import Layout from "./pages/Layout/Layout";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import WriteArticle from "./pages/WriteArticle/WriteArticle";
 import BlogTitles from "./pages/BlogTitles/BlogTitles";
-import GeneratedImages from "./pages/GenerateImages/GeneratedImages";
+import GenerateImages from "./pages/GenerateImages/GenerateImages";
 import RemoveObject from "./pages/RemoveObject/RemoveObject";
 import RemoveBackground from "./pages/RemoveBackground/RemoveBackground";
 import ReviewResume from "./pages/ReviewResume/ReviewResume";
@@ -19,7 +19,7 @@ const App = () => {
           <Route index element={<Dashboard />} />
           <Route path="write-article" element={<WriteArticle />} />
           <Route path="blog-titles" element={<BlogTitles />} />
-          <Route path="generated-images" element={<GeneratedImages />} />
+          <Route path="generate-images" element={<GenerateImages />} />
           <Route path="remove-background" element={<RemoveBackground />} />
           <Route path="remove-object" element={<RemoveObject />} />
           <Route path="review-resume" element={<ReviewResume />} />

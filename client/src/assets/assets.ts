@@ -188,6 +188,5 @@ export const dummyPublishedCreationData = [
     likes: ["user_2yaW5EHzeDfQbXdAJWYFnZo2bje"],
     created_at: "2025-06-23T11:29:23.351Z",
     updated_at: "2025-06-23T11:29:44.434Z",
-    __v: 1,
   },
 ];
