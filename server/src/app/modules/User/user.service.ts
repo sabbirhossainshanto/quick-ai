@@ -5,7 +5,7 @@ const getUserCreations = async (req: Request) => {
   const { userId } = req.auth();
 
   const creations =
-    await sql`SELECT * FROM creations WHERE user_id = ${userId} ORDER BY created_at DESC
+    await sql`SELECT * FROM creation WHERE user_id = ${userId} ORDER BY created_at DESC
   `;
 
   return {
@@ -16,7 +16,7 @@ const getUserCreations = async (req: Request) => {
 };
 const getPublishCreations = async () => {
   const creations =
-    await sql`SELECT * FROM creations WHERE publish = true ORDER BY created_at DESC
+    await sql`SELECT * FROM creation WHERE publish = true ORDER BY created_at DESC
   `;
 
   return {
@@ -29,7 +29,7 @@ const toggleLikeCreation = async (req: Request) => {
   const { userId } = req.auth();
   const { id } = req.body;
   const [creation] =
-    await sql`SELECT * FROM creations WHERE id = ${id} ORDER BY created_at DESC
+    await sql`SELECT * FROM creation WHERE id = ${id} ORDER BY created_at DESC
   `;
   if (!creation) {
     return {
@@ -51,8 +51,8 @@ const toggleLikeCreation = async (req: Request) => {
     message = "Creation liked";
   }
 
-  const formattedArray = `{${updatedLikes.json(",")}}`;
-  await sql`UPDATE creations SET likes = ${formattedArray}:text[] WHERE id = ${id}
+  const formattedArray = `{${updatedLikes.join(",")}}`;
+  await sql`UPDATE creation SET likes = ${formattedArray}::text[] WHERE id = ${id}
   `;
   return {
     message,

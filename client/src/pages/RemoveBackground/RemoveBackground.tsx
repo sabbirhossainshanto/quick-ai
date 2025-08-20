@@ -1,10 +1,17 @@
 import { Eraser, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { useRemoveImageBG } from "../../hooks/image";
 
 const RemoveBackground = () => {
-  const [, setInput] = useState<File | null>(null);
+  const { mutate: handleRemoveBG, data, isPending } = useRemoveImageBG();
+  const [input, setInput] = useState<File | null>(null);
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (input) {
+      const formData = new FormData();
+      formData.append("image", input);
+      handleRemoveBG(formData);
+    }
   };
   return (
     <div className="h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 text-slate-700">
@@ -29,8 +36,15 @@ const RemoveBackground = () => {
           Supports JPG, PNG, and other image formats
         </p>
 
-        <button className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#F6AB41] to-[#FF4938] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer">
-          <Eraser className="w-5" />
+        <button
+          disabled={isPending}
+          className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#F6AB41] to-[#FF4938] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
+        >
+          {isPending ? (
+            <span className="w-4 h-4 my-1 rounded-full border-2 border-t-transparent animate-spin" />
+          ) : (
+            <Eraser className="w-5" />
+          )}
           Remove background
         </button>
       </form>
@@ -40,12 +54,18 @@ const RemoveBackground = () => {
           <Eraser className="w-5 h-5 text-[#FF4938]" />
           <h1 className="text-xl font-semibold">Processed Image</h1>
         </div>
-        <div className="flex-1 flex justify-center items-center">
-          <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
-            <Eraser className="w-9 h-9" />
-            <p>Upload an image and click “Remove Background” to get started</p>
+        {!data ? (
+          <div className="flex-1 flex justify-center items-center">
+            <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
+              <Eraser className="w-9 h-9" />
+              <p>
+                Upload an image and click “Remove Background” to get started
+              </p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <img src={data?.data} className="mt-3 w-full h-full" alt="image" />
+        )}
       </div>
     </div>
   );

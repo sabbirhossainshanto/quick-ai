@@ -1,10 +1,18 @@
 import { FileText, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { useReviewResume } from "../../hooks/resume";
+import Markdown from "react-markdown";
 
 const ReviewResume = () => {
-  const [, setInput] = useState<File | null>(null);
+  const { mutate: handleReviewResume, data, isPending } = useReviewResume();
+  const [input, setInput] = useState<File | null>(null);
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (input) {
+      const formData = new FormData();
+      formData.append("resume", input);
+      handleReviewResume(formData);
+    }
   };
   return (
     <div className="h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 text-slate-700">
@@ -29,8 +37,15 @@ const ReviewResume = () => {
           Supports PDF resume only
         </p>
 
-        <button className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#00DA83] to-[#009BB3] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer">
-          <FileText className="w-5" />
+        <button
+          disabled={isPending}
+          className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#00DA83] to-[#009BB3] text-white px-4 py-2 mt-6 text-sm rounded-lg cursor-pointer"
+        >
+          {isPending ? (
+            <span className="w-4 h-4 my-1 rounded-full border-2 border-t-transparent animate-spin" />
+          ) : (
+            <FileText className="w-5" />
+          )}
           Review Resume
         </button>
       </form>
@@ -40,12 +55,20 @@ const ReviewResume = () => {
           <FileText className="w-5 h-5 text-[#00DA83]" />
           <h1 className="text-xl font-semibold">Analysis Results</h1>
         </div>
-        <div className="flex-1 flex justify-center items-center">
-          <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
-            <FileText className="w-9 h-9" />
-            <p>Upload an resume and click “Review Resume” to get started</p>
+        {!data ? (
+          <div className="flex-1 flex justify-center items-center">
+            <div className="text-sm flex flex-col items-center gap-5 text-gray-400">
+              <FileText className="w-9 h-9" />
+              <p>Upload an resume and click “Review Resume” to get started</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="mt-3 h-full overflow-y-scroll text-sm text-slate-600">
+            <div className="reset-tw">
+              <Markdown>{data?.data}</Markdown>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

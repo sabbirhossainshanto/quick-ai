@@ -28,6 +28,7 @@ const generateImage = async (req: Request) => {
       responseType: "arraybuffer",
     }
   );
+
   const base64Image = `data:image/png;base64, ${Buffer.from(
     data,
     "binary"
@@ -64,6 +65,7 @@ const removeImageBackground = async (req: Request) => {
         },
       ],
     });
+
     await sql`INSERT INTO creation (user_id,prompt,content,type)
   VALUES (${userId},"Remove background from image",${secure_url},'image')
   `;
@@ -84,7 +86,7 @@ const removeImageBackground = async (req: Request) => {
 
 const removeImageObject = async (req: Request) => {
   const { userId } = req.auth();
-  const { object } = req.body();
+  const { object } = req.body;
   const image = req.file;
   const { plan } = req;
   if (plan !== "premium") {
