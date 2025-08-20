@@ -1,14 +1,29 @@
 import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
-import { dummyPublishedCreationData } from "../../assets/assets";
 import type { ICreation } from "../../type";
 import { Heart } from "lucide-react";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
 
 const Community = () => {
+  const axiosSecure = useAxiosSecure();
   const [creations, setCreations] = useState<ICreation[]>([]);
   const { user } = useUser();
   const fetchCreations = async () => {
-    setCreations(dummyPublishedCreationData);
+    const { data } = await axiosSecure.get("/api/v1/users/published-creations");
+    setCreations(data?.data);
+  };
+
+  const imageLikeToggle = async (id: number) => {
+    const { data } = await axiosSecure.post("/api/v1/users/toggle-like", {
+      id,
+    });
+    if (data?.success) {
+      toast.success(data?.message);
+      await fetchCreations();
+    } else {
+      toast.error(data?.message);
+    }
   };
 
   useEffect(() => {
@@ -16,6 +31,7 @@ const Community = () => {
       fetchCreations();
     }
   }, [user]);
+
   return (
     <div className="flex-1 h-full flex flex-col gap-4 p-6">
       Creations
@@ -37,6 +53,7 @@ const Community = () => {
               <div className="flex gap-1 items-center">
                 <p>{creation.likes.length}</p>
                 <Heart
+                  onClick={() => imageLikeToggle(creation?.id)}
                   className={`min-h-5 hover:scale-110 cursor-pointer ${
                     user && creation?.likes?.includes(user?.id)
                       ? "fill-red-500 text-red-600"
